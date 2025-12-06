@@ -42,3 +42,5 @@ pytest
 ```
 
 This will discover and execute all tests under the `tests/` directory.
+
+## estudiante: Jean Lopez Mora
