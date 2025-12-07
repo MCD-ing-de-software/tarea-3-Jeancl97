@@ -118,11 +118,9 @@ class TestDataCleaner(unittest.TestCase):
         """
         df = make_sample_df()
         cleaner = DataCleaner()
-        df["name"] = df["name"].astype("string") #forzar tipo string para evitar errores
+        df["name"] = df["name"].astype("string")
         result = cleaner.trim_strings(df, ["name"])
-        
-        
-        # verificacion de la no modificacion del DataFrame original
+        # verificacion de que el DataFrame original no fue modificado
         self.assertEqual(df.loc[0, "name"], " Alice ")
         self.assertEqual(df.loc[3, "name"], " Carol  ")
         
@@ -159,7 +157,18 @@ class TestDataCleaner(unittest.TestCase):
         - Verificar que el valor extremo (120) fue eliminado del resultado (usar self.assertNotIn para verificar que 120 no está en los valores de la columna)
         - Verificar que al menos uno de los valores no extremos (25 o 35) permanece en el resultado (usar self.assertIn para verificar que está presente)
         """
+        df = pd.DataFrame({
+            "name": ["a","b","c","d","e"],
+            "age": [25, 26, 27, 35, 120]
+        })
 
+        cleaner = DataCleaner()
+        result = cleaner.remove_outliers_iqr(df, "age", factor=1.5)
+
+        self.assertNotIn(120, result["age"].values)
+        self.assertTrue((25 in result["age"].values) or (26 in result["age"].values))
+        
+        
     def test_remove_outliers_iqr_raises_keyerror_for_missing_column(self):
         """Test que verifica que el método remove_outliers_iqr lanza un KeyError cuando
         se llama con una columna que no existe en el DataFrame.
